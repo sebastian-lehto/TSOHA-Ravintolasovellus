@@ -1,3 +1,8 @@
+# VÄLIPALAUTUS 1
+ 
+ Kovista kiireistä johtuen sovellus ei ole vielä sellaisessa vaiheessa, että sitä voisi testata Herokussa.
+ Sovelluksessa on tällä hetkellä kirjautumiseen tarkoitettu näkymä ja ite "pääsivun" näkymä, mutta toiminnallisuutta ei vielä ole.
+
 # TSOHA-Ravintolasovellus
 
 Sovelluksessa näkyy tietyn alueen ravintolat, joista voi etsiä tietoa ja lukea arvioita. Jokainen käyttäjä on peruskäyttäjä tai ylläpitäjä.
@@ -18,3 +23,6 @@ Käyttäjä näkee myös listan, jossa ravintolat on järjestetty parhaimmasta h
 Ylläpitäjä voi tarvittaessa poistaa käyttäjän antaman arvion.
 
 Ylläpitäjä voi luoda ryhmiä, joihin ravintoloita voi luokitella. Ravintola voi kuulua yhteen tai useampaan ryhmään.
+
+ 
+ 

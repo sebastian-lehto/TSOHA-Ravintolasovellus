@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-app.secret_key = 9b761b17d8a5d34e763bd474e1c55e74 #getenv(SECRET_KEY)
+app.secret_key = getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///postgres"
 db = SQLAlchemy(app)
 

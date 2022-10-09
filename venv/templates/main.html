@@ -1,1 +1,9 @@
 <h1>RAVINTOASOVELLUS</h1>
+
+Ravintoloiden määrä: {{count}}
+<br>
+<br>
+{% for rest in rests %}
+//<a href = "/{{rest.id}}">{{rest.name}} - {{rest.groups}} - {{rest.rating}} - {{rest.ratings}} - {{rest.des}} </a>
+<br>
+{% endfor %}

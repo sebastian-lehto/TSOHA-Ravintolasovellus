@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import redirect, render_template, request, session
-import os
+from os import getenv
 from flask_sqlalchemy import SQLAlchemy 
 
 app = Flask(__name__)

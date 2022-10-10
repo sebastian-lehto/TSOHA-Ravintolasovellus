@@ -1,11 +1,12 @@
 from flask import Flask
 from flask import redirect, render_template, request, session
-from os import getenv
+import os
 from flask_sqlalchemy import SQLAlchemy 
 
-
 app = Flask(__name__)
-app.secret_key = getenv("SECRET_KEY")
+app.secret_key = "9b761b17d8a5d34e763bd474e1c55e74"
+
+app.config['SESSION_TYPE'] = 'filesystem'
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///postgres"
 db = SQLAlchemy(app)
 
@@ -18,12 +19,12 @@ def index():
 def uusi():
     return render_template("uusi.html")
 
-@app.route("/login")
+@app.route("/login",methods=["POST"])
 def login():
-    usr = request.form["tunnus"]
-    usr = request.form["salasana"]
+    username = request.form["tunnus"]
+    password = request.form["salasana"]
 
-    session["username"] = usr
+    session["username"] = username
     return redirect("/main")
 
 @app.route("/main")

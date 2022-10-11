@@ -1,3 +1,6 @@
+# VÄLIPALAUTUS 2
+Sovellus ei jostain syystä toimi herokun kanassa oikein, mutta sitä voi testata osoitteessa: https://ravintolasovellus-tsoha.herokuapp.com
+
 # VÄLIPALAUTUS 1
  
  Kovista kiireistä johtuen sovellus ei ole vielä sellaisessa vaiheessa, että sitä voisi testata Herokussa.

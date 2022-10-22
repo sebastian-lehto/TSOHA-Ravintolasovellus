@@ -15,7 +15,7 @@ Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
 
 Käyttäjä näkee ravintolat ja voi painaa ravintolasta, jolloin siitä näytetään lisää tietoa (kuten kuvaus).
 
-Käyttäjä voi antaa arvion (tähdet) ravintolasta ja lukea muiden antamia arvioita.
+Käyttäjä voi antaa arvion (tähdet) ravintolasta ja nähdä muiden antamia arvioita.
 
 Ylläpitäjä voi lisätä ja poistaa ravintoloita.
 

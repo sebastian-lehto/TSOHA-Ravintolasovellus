@@ -1,9 +1,44 @@
-<h1>RAVINTOASOVELLUS</h1>
+<form action="/logout" method="POST">
+    <input type="submit" value="Log Out">
+</form>
+<h1>RESTAURANT APPLICATION</h1>
 
-Ravintoloiden määrä: {{count}}
+<form action="/search" method="POST">
+    <input type="text" name="search" placeholder="Indian">
+    <input type="submit" value="Search">
+</form>
+Number of restaurants: {{count}}
+
 <br>
 <br>
 {% for rest in rests %}
-//<a href = "/{{rest.id}}">{{rest.name}} - {{rest.groups}} - {{rest.rating}} - {{rest.ratings}} - {{rest.des}} </a>
+
+<form action="/ravintola/{{rest.id}}",method="POST">
+    <label for="nimi">{{rest.name}}</label>
+    <input type="submit" value="...">
+</form>
+
+{% if session.username == "admin" %}
+<form action="/delete" method="POST">
+    <input type="hidden" name="tunnus" value="{{rest.id}}">
+    <input type="submit" value="DELETE">
+</form>
 <br>
+{% endif %}
 {% endfor %}
+
+{% if session.username == "admin" %}
+ADD RESTAURANT
+<form action="/add" method="POST">
+    Name:
+    <input type="text" name="name" placeholder="Example Sushi">
+    <br>
+    Groups:
+    <input type="text" name="groups" placeholder="Asian,Sushi,Japanese">
+    <br>
+    Description:
+    <input type="text" name="desc">
+    <br>
+    <input type="submit" value="Add">
+</form>
+{% endif %}

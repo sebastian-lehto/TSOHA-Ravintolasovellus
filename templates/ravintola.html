@@ -1,0 +1,32 @@
+<h1>RESTAURANT APPLICATION</h1>
+
+
+<br>
+<br>
+Name: {{data[0]}}<br>
+Groups: {{data[1].replace(",,", ",")}}<br>
+Ratings: {{data[2]}}<br>
+Rating: {{data[3]}}<br>
+Description: {{data[4]}}<br><br>
+<br>
+<br>
+<form action="/rate" method="POST">
+    <input type="hidden" name="tunnus" value="{{id}}">
+    <input type="radio" name="arvosana" value="1">1
+    <input type="radio" name="arvosana" value="2">2
+    <input type="radio" name="arvosana" value="3">3
+    <input type="radio" name="arvosana" value="4">4
+    <input type="radio" name="arvosana" value="5" checked="checked">5
+    <input type="submit" value="Rate">
+</form>
+
+{% if session.username == "admin" %}
+
+Add Group
+<form action="/group" method="POST">
+    <input type="hidden" name="tunnus" value="{{id}}">
+    <input type="text" name="group" placeholder="Asian,Sushi,Japanese">
+    <input type="submit" value="Add Group">
+</form>
+
+{% endif %}

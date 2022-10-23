@@ -107,7 +107,7 @@ def main():
 @app.route("/search", methods=["POST"])
 def search():
     word = "%" + request.form["search"] + "%"
-    sql = "SELECT id, name, groups, ratings, rating, des FROM restaurants WHERE groups LIKE :word ORDER BY rating DESC"
+    sql = "SELECT id, name, groups, ratings, rating, des FROM restaurants WHERE groups LIKE :word OR des LIKE :word ORDER BY rating DESC"
     result = db.session.execute(sql, {"word":word})
     rests = result.fetchall()
 

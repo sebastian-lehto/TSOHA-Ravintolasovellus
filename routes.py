@@ -1,5 +1,6 @@
 from app import app
 from db import db
+from sqlalchemy.sql import text
 from flask import redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -32,8 +33,8 @@ def login():
 
     sql1 = "SELECT id, password FROM users WHERE username=:username"
     sql2 = "SELECT id, password FROM admins WHERE username=:username"
-    result1 = db.session.execute(sql1, {"username":username})
-    result2 = db.session.execute(sql2, {"username":username})
+    result1 = db.session.execute(text(sql1), {"username":username})
+    result2 = db.session.execute(text(sql2), {"username":username})
     user = result1.fetchone()
     admin = result2.fetchone()    
     if not user:

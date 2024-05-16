@@ -1,7 +1,8 @@
+import secrets
 from app import app
 from db import db
 from sqlalchemy.sql import text
-from flask import redirect, render_template, request, session, url_for
+from flask import redirect, render_template, request, session, url_for, abort
 from werkzeug.security import check_password_hash, generate_password_hash
 
 @app.route("/")
@@ -10,13 +11,18 @@ def index():
     return render_template("index.html", message=msg)
 
 @app.route("/new")
-def uusi():
-    return render_template("new.html")
+def new():
+    msg = "" if not "message" in request.args else request.args["message"]
+    return render_template("new.html", message=msg)
 
 @app.route("/create",methods=["POST"])
-def luo():
+def create():
     username = request.form["username"]
     password = request.form["password"]
+
+    if not len(username) in range(4, 13) or not len(password) in range(4, 13):
+                msg = "Username and Passwod must be 4-12 characters long!"
+                return redirect(url_for("new", message=msg))
 
     hash_value = generate_password_hash(password)
     sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
@@ -38,28 +44,37 @@ def login():
     result2 = db.session.execute(sql2, {"username":username})
     user = result1.fetchone()
     admin = result2.fetchone()    
+    
     if admin:
         hash_value = admin.password
+
         if check_password_hash(hash_value, password):
             session["username"] = "admin"
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/main")
+
         else:
             msg = "Invalid Password"
             return redirect(url_for("index", message=msg))
+    
     elif user:
         hash_value = user.password
+
         if check_password_hash(hash_value, password):
+
             if username == "admin": 
                 username = "USER"
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/main")
+
         else:
             msg = "Invalid Password"
             return redirect(url_for("index", message=msg))
+    
     else:
         msg = "Invalid Username"
         return redirect(url_for("index", message=msg))
-    return redirect("/")  
     
 
 @app.route("/restaurant/<id>",methods=['GET','POST'])
@@ -76,6 +91,9 @@ def restaurant(id):
 
 @app.route("/rate", methods=["POST"])
 def rate():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    
     id = request.form["restaurant_id"]
     sql = text("SELECT ratings, rating FROM restaurants WHERE id=:id")
     result = db.session.execute(sql, {"id":id})
@@ -98,6 +116,7 @@ def rate():
 @app.route("/logout", methods=["POST"])
 def logout():
     del session["username"]
+    del session["csrf_token"]
     return redirect("/")
 
 @app.route("/back", methods=["POST"])
@@ -129,6 +148,9 @@ def search():
 
 @app.route("/add", methods=["POST"])
 def add():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+
     name = request.form["name"]
     groups = request.form["groups"]
     des = request.form["desc"]
@@ -140,6 +162,9 @@ def add():
 
 @app.route("/group", methods=["POST"])
 def group():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+
     id = request.form["restaurant_id"]
     groups = request.form["group"]
     
@@ -159,6 +184,9 @@ def group():
 
 @app.route("/delete", methods=["POST"])
 def delete():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+
     id = request.form["restaurant_id"]
     sql = text("DELETE FROM restaurants WHERE id=:id")
     result = db.session.execute(sql, {"id":id})

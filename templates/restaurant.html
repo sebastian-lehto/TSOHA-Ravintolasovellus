@@ -25,6 +25,7 @@ Description: {{data[4]}}<br><br>
     <input type="radio" name="rating" value="4">4
     <input type="radio" name="rating" value="5" checked="checked">5
     <input type="submit" value="Rate">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 {% if session.username == "admin" %}
@@ -34,6 +35,7 @@ Add Group
     <input type="hidden" name="restaurant_id" value="{{id}}">
     <input type="text" name="group" placeholder="Asian,Sushi,Japanese">
     <input type="submit" value="Add Group">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 {% endif %}

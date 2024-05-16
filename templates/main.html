@@ -22,6 +22,7 @@ Number of restaurants: {{count}}
 <form action="/delete" method="POST">
     <input type="hidden" name="restaurant_id" value="{{rest.id}}">
     <input type="submit" value="DELETE">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 <br>
 {% endif %}
@@ -40,5 +41,6 @@ ADD RESTAURANT
     <input type="text" name="desc">
     <br>
     <input type="submit" value="Add">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 {% endif %}

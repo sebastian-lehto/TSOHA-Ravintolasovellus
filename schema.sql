@@ -14,6 +14,7 @@ CREATE TABLE restaurants (
     id SERIAL PRIMARY KEY,
     name TEXT,
     groups TEXT,
-    ratings TEXT,
+    ratings INTEGER,
+    rating REAL,
     des TEXT
 );

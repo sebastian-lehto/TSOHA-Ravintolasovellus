@@ -2,7 +2,7 @@
     <input type="submit" value="Log Out">
 </form>
 <h1>RESTAURANT APPLICATION</h1>
-
+{{message}}
 <form action="/search" method="POST">
     <input type="text" name="search" placeholder="Indian">
     <input type="submit" value="Search">
@@ -13,14 +13,14 @@ Number of restaurants: {{count}}
 <br>
 {% for rest in rests %}
 
-<form action="/ravintola/{{rest.id}}",method="POST">
-    <label for="nimi">{{rest.name}}</label>
+<form action="/restaurant/{{rest.id}}",method="POST">
+    <label for="name">{{rest.name}}</label>
     <input type="submit" value="...">
 </form>
 
 {% if session.username == "admin" %}
 <form action="/delete" method="POST">
-    <input type="hidden" name="tunnus" value="{{rest.id}}">
+    <input type="hidden" name="restaurant_id" value="{{rest.id}}">
     <input type="submit" value="DELETE">
 </form>
 <br>

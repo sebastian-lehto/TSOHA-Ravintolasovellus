@@ -1,13 +1,14 @@
 <form action="/login" method="POST">
-    Anna käyttäjätunnus:
+    {{message}}
+    Username:
     <br>
-    <input type="text" name="tunnus">
+    <input type="text" name="username">
     <br>
-    Anna salasana:     
+    Password:     
     <br>
-    <input type="text" name="salasana">
+    <input type="text" name="password">
     <br>
-    <input type="submit" value="Kirjaudu">
-    <a href="/uusi"> <input type="button" value = "Luo Käyttäjä"></a>
+    <input type="submit" value="Log In">
+    <a href="/uusi"> <input type="button" value = "Register"></a>
 
 </form>

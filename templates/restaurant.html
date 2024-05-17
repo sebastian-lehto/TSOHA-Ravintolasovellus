@@ -7,7 +7,7 @@
 </form>
 <h1>RESTAURANT APPLICATION</h1>
 
-
+{{message}}
 <br>
 <br>
 Name: {{data[0]}}<br>
@@ -15,26 +15,55 @@ Groups: {{data[1].replace(",,", ",")}}<br>
 Ratings: {{data[2]}}<br>
 Rating: {{data[3]}}<br>
 Description: {{data[4]}}<br><br>
+
 <br>
 <br>
 <form action="/rate" method="POST">
-    <input type="hidden" name="restaurant_id" value="{{id}}">
     <input type="radio" name="rating" value="1">1
     <input type="radio" name="rating" value="2">2
     <input type="radio" name="rating" value="3">3
     <input type="radio" name="rating" value="4">4
     <input type="radio" name="rating" value="5" checked="checked">5
     <input type="submit" value="Rate">
+
+    <input type="text" name="content" placeholder="Leave a Comment Here">
+
+    <input type="hidden" name="restaurant_id" value="{{id}}">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
+<br>
+<br>
+
+<div>
+{% for comment in comments %}
+<div>
+    {{comment[0]}}
+    {% if session.username == "admin" %}
+    <form action="/erase" method="POST">
+        <input type="submit" value="Delete">
+        <input type="hidden" name="comment_id" value="{{comment[2]}}">
+        <input type="hidden" name="restaurant_id" value="{{id}}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+    {% endif %}
+    <br>
+    {{comment[1]}}
+    <br>
+    <br>
+</div>
+{% endfor %}
+</div>
+<br>
+<br>
 
 {% if session.username == "admin" %}
 
 Add Group
 <form action="/group" method="POST">
-    <input type="hidden" name="restaurant_id" value="{{id}}">
     <input type="text" name="group" placeholder="Asian,Sushi,Japanese">
     <input type="submit" value="Add Group">
+
+    <input type="hidden" name="restaurant_id" value="{{id}}">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 

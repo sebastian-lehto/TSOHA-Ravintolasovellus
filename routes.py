@@ -84,10 +84,14 @@ def restaurant(id):
     except:    
         return redirect("/")
     
-    sql = text("SELECT name, groups, ratings, rating, des FROM restaurants WHERE id=:id")
-    result = db.session.execute(sql, {"id":id})
-    data = result.fetchone()
-    return render_template("restaurant.html", data=data, id=id)
+    sql1 = text("SELECT name, groups, ratings, rating, des FROM restaurants WHERE id=:id")
+    sql2 = text("SELECT username, content, id FROM comments WHERE restaurant_id=:id")
+    result1 = db.session.execute(sql1, {"id":id})
+    result2 = db.session.execute(sql2, {"id":id})
+    data = result1.fetchone()
+    comments = result2.fetchall()
+    msg = "" if not "message" in request.args else request.args["message"]
+    return render_template("restaurant.html", data=data, id=id, comments=comments, message=msg)
 
 @app.route("/rate", methods=["POST"])
 def rate():
@@ -110,8 +114,15 @@ def rate():
     db.session.execute(sql2, {"new":new, "id":id})
     db.session.commit()
 
+    comment = request.form["content"]
+    if (len(comment) > 3):
+        username = session["username"]
+        sql3 = text("INSERT INTO comments (restaurant_id, username, content) VALUES (:id, :username, :comment)")
+        db.session.execute(sql3, {"id":id, "username":username, "comment":comment})
+        db.session.commit()
+
     msg = "Rating Added!"
-    return redirect(url_for('main', message=msg))
+    return redirect(url_for("restaurant", id=id, message=msg))
 
 @app.route("/logout", methods=["POST"])
 def logout():
@@ -194,4 +205,19 @@ def delete():
 
     msg = "Restaurant Deleted!"
     return redirect(url_for('main', message=msg))
+
+@app.route("/erase", methods=["POST"])
+def erase():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+
+    id = request.form["comment_id"]
+    sql = text("DELETE FROM comments WHERE id=:id")
+    result = db.session.execute(sql, {"id":id})
+    db.session.commit()
+
+    msg = "Comment Deleted!"
+    restaurant_id = request.form["restaurant_id"]
+    return redirect(url_for("restaurant", id=restaurant_id, message=msg))
+
 

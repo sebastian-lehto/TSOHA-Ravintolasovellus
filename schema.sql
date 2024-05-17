@@ -18,3 +18,10 @@ CREATE TABLE restaurants (
     rating REAL,
     des TEXT
 );
+
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    restaurant_id INTEGER,
+    username TEXT, 
+    content TEXT
+);

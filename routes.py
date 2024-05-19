@@ -2,18 +2,16 @@ import secrets
 from app import app
 from db import db
 from sqlalchemy.sql import text
-from flask import redirect, render_template, request, session, url_for, abort
+from flask import redirect, render_template, request, session, abort
 from werkzeug.security import check_password_hash, generate_password_hash
 
 @app.route("/")
 def index():
-    msg = "" if not "message" in request.args else request.args["message"]
-    return render_template("index.html", message=msg)
+    return render_template("index.html")
 
 @app.route("/new")
 def new():
-    msg = "" if not "message" in request.args else request.args["message"]
-    return render_template("new.html", message=msg)
+    return render_template("new.html")
 
 @app.route("/create",methods=["POST"])
 def create():
@@ -21,14 +19,15 @@ def create():
     password = request.form["password"]
 
     if not len(username) in range(4, 13) or not len(password) in range(4, 13):
-                msg = "Username and Passwod must be 4-12 characters long!"
-                return redirect(url_for("new", message=msg))
+                session["message"]  = "Username and Passwod must be 4-12 characters long!"
+                return redirect("/new")
 
     hash_value = generate_password_hash(password)
     sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
     db.session.execute(sql, {"username":username, "password":hash_value})
     db.session.commit()
     session["username"] = username
+    session["message"] = ""
     return redirect("/main")
 
 
@@ -51,11 +50,12 @@ def login():
         if check_password_hash(hash_value, password):
             session["username"] = "admin"
             session["csrf_token"] = secrets.token_hex(16)
+            session["message"] = ""
             return redirect("/main")
 
         else:
-            msg = "Invalid Password"
-            return redirect(url_for("index", message=msg))
+            session["message"] = "Invalid Password"
+            return redirect("/")
     
     elif user:
         hash_value = user.password
@@ -66,15 +66,16 @@ def login():
                 username = "USER"
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
+            session["message"] = ""
             return redirect("/main")
 
         else:
-            msg = "Invalid Password"
-            return redirect(url_for("index", message=msg))
+            session["message"] = "Invalid Password"
+            return redirect("/")
     
     else:
-        msg = "Invalid Username"
-        return redirect(url_for("index", message=msg))
+        session["message"] = "Invalid Username"
+        return redirect("/")
     
 
 @app.route("/restaurant/<id>",methods=['GET','POST'])
@@ -86,12 +87,17 @@ def restaurant(id):
     
     sql1 = text("SELECT name, groups, ratings, rating, des FROM restaurants WHERE id=:id")
     sql2 = text("SELECT username, content, id FROM comments WHERE restaurant_id=:id")
+    sql3 = text("SELECT user FROM favourites WHERE username=:username AND restaurant=:id")
     result1 = db.session.execute(sql1, {"id":id})
     result2 = db.session.execute(sql2, {"id":id})
+    result3 = db.session.execute(sql3, {"username":session["username"], "id":id})
     data = result1.fetchone()
     comments = result2.fetchall()
-    msg = "" if not "message" in request.args else request.args["message"]
-    return render_template("restaurant.html", data=data, id=id, comments=comments, message=msg)
+    favourite = "+"
+    if result3.fetchone():
+        favourite = "-"
+
+    return render_template("restaurant.html", data=data, id=id, comments=comments, fav=favourite)
 
 @app.route("/rate", methods=["POST"])
 def rate():
@@ -115,23 +121,25 @@ def rate():
     db.session.commit()
 
     comment = request.form["content"]
-    if (len(comment) > 3):
+    if (len(comment.strip()) > 3):
         username = session["username"]
         sql3 = text("INSERT INTO comments (restaurant_id, username, content) VALUES (:id, :username, :comment)")
         db.session.execute(sql3, {"id":id, "username":username, "comment":comment})
         db.session.commit()
 
-    msg = "Rating Added!"
-    return redirect(url_for("restaurant", id=id, message=msg))
+    session["message"] = "Rating Added!"
+    return redirect("/restaurant/"+id)
 
 @app.route("/logout", methods=["POST"])
 def logout():
     del session["username"]
     del session["csrf_token"]
+    session["message"] = "You Have Been Logged Out"
     return redirect("/")
 
 @app.route("/back", methods=["POST"])
 def back():
+    session["message"] = ""
     return redirect("/main")
 
 
@@ -145,8 +153,25 @@ def main():
     result = db.session.execute(sql)
     rests = result.fetchall()
 
-    msg = "" if not "message" in request.args else request.args["message"]
-    return render_template("main.html", count=len(rests), rests = rests, message=msg)
+    return render_template("main.html", count=len(rests), rests = rests)
+
+@app.route("/favourites", methods=["POST"])
+def favourites():
+    try :
+        session["username"]
+    except:    
+        return redirect("/")
+    sql1 = text("SELECT restaurant FROM favourites WHERE username=:user")
+    result1 = db.session.execute(sql1, {"user":session["username"]})
+    rest_ids = result1.fetchall()
+    rests = []
+    sql2 = text("SELECT id, name, groups, ratings, rating, des FROM restaurants WHERE id=:id ORDER BY rating DESC")
+    for id in rest_ids:
+        result2 = db.session.execute(sql2, {"id":id[0]})
+        rests.append(result2.fetchone())
+
+    return render_template("favourites.html", count=len(rests), rests = rests)
+    
 
 @app.route("/search", methods=["POST"])
 def search():
@@ -154,7 +179,7 @@ def search():
     sql = text("SELECT id, name, groups, ratings, rating, des FROM restaurants WHERE groups LIKE :word OR des LIKE :word ORDER BY rating DESC")
     result = db.session.execute(sql, {"word":word})
     rests = result.fetchall()
-
+    session["message"] = ""
     return render_template("main.html", count=len(rests), rests = rests)
 
 @app.route("/add", methods=["POST"])
@@ -168,7 +193,7 @@ def add():
     sql = text("INSERT INTO restaurants (name, groups, ratings, rating, des) VALUES (:name, :groups, 0, 0, :des)")
     db.session.execute(sql, {"name":name, "groups":groups, "des":des})
     db.session.commit()
-
+    session["message"] = "Restaurant Added"
     return redirect("/main")
 
 @app.route("/group", methods=["POST"])
@@ -190,8 +215,8 @@ def group():
     db.session.execute(sql2, {"new":new, "id":id})
     db.session.commit()
 
-    msg = "Group Added!"
-    return redirect(url_for('main', message=msg))
+    session["message"] = "Group Added!"
+    return redirect("/main")
 
 @app.route("/delete", methods=["POST"])
 def delete():
@@ -199,12 +224,16 @@ def delete():
         abort(403)
 
     id = request.form["restaurant_id"]
-    sql = text("DELETE FROM restaurants WHERE id=:id")
-    result = db.session.execute(sql, {"id":id})
+    sql1 = text("DELETE FROM restaurants WHERE id=:id")
+    result1 = db.session.execute(sql1, {"id":id})
+    sql2 = text("DELETE FROM favourites WHERE restaurant=:id")
+    result2 = db.session.execute(sql2, {"id":id})
+    sql3 = text("DELETE FROM comments WHERE restaurant_id=:id")
+    result3 = db.session.execute(sql3, {"id":id})
     db.session.commit()
 
-    msg = "Restaurant Deleted!"
-    return redirect(url_for('main', message=msg))
+    session["message"] = "Restaurant Deleted!"
+    return redirect("/main")
 
 @app.route("/erase", methods=["POST"])
 def erase():
@@ -216,8 +245,27 @@ def erase():
     result = db.session.execute(sql, {"id":id})
     db.session.commit()
 
-    msg = "Comment Deleted!"
+    session["message"] = "Comment Deleted!"
     restaurant_id = request.form["restaurant_id"]
-    return redirect(url_for("restaurant", id=restaurant_id, message=msg))
+    return redirect("/restaurant/"+restaurant_id)
 
+@app.route("/favourite", methods=["POST"])
+def favourite():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
 
+    user = session["username"]
+    restaurant_id = request.form["restaurant_id"]
+    
+    if request.form["favourited"] == "-":
+        sql = text("DELETE FROM favourites WHERE restaurant=:restaurant_id AND username=:user")
+        db.session.execute(sql, {"user":user, "restaurant_id":restaurant_id})
+        db.session.commit()
+        session["message"] = "Restaurant Removed From Favourites"
+        return redirect("/restaurant/"+restaurant_id)
+    else:
+        sql = text("INSERT INTO favourites (username, restaurant) VALUES (:user, :restaurant_id)")
+        db.session.execute(sql, {"user":user, "restaurant_id":restaurant_id})
+        db.session.commit()
+        session["message"] = "Restaurant Added To Favourites"
+        return redirect("/restaurant/"+restaurant_id)

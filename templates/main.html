@@ -1,8 +1,13 @@
 <form action="/logout" method="POST">
     <input type="submit" value="Log Out">
 </form>
+<form action="/favourites" method="POST">
+    <input type="submit" value="Favourites">
+</form>
 <h1>RESTAURANT APPLICATION</h1>
-{{message}}
+<br>
+{{session["message"]}}
+<br>
 <form action="/search" method="POST">
     <input type="text" name="search" placeholder="Indian">
     <input type="submit" value="Search">

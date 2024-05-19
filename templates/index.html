@@ -1,5 +1,10 @@
+<head>
+    <title>Restaurant Appllication</title>
+    <link rel="stylesheet" href="{{'./styles.css'}}">
+</head>
 <form action="/login" method="POST">
-    {{message}}
+    {{session["message"]}}
+    <br>
     Username:
     <br>
     <input type="text" name="username">

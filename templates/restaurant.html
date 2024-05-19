@@ -1,14 +1,22 @@
+<head>
+    <title>Restaurant Appllication</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+</head>
+
+<div class="header">
 <form action="/logout" method="POST">
-    <input type="submit" value="Log Out">
+    <input type="submit" value="Log Out" class="button">
 </form>
 
 <form action="/back" method="POST">
-    <input type="submit" value="Main">
+    <input type="submit" value="Main" class="button">
 </form>
 
 <form action="/favourites" method="POST">
-    <input type="submit" value="Favourites">
+    <input type="submit" value="Favourites" class="button">
 </form>
+</div>
+
 <h1>RESTAURANT APPLICATION</h1>
 
 {{session["message"]}}
@@ -20,7 +28,7 @@ Ratings: {{data[2]}}<br>
 Rating: {{data[3]}}<br>
 Description: {{data[4]}}<br>
 <form action="/favourite" method="POST">
-    <input type="submit" value="{{fav}}">
+    <input type="submit" value="{{fav}}" class="button">
     <input type="hidden" name="favourited" value="{{fav}}">
     <input type="hidden" name="restaurant_id" value="{{id}}">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -39,7 +47,7 @@ Description: {{data[4]}}<br>
     <br>
     <input type="text" name="content" placeholder="Leave a Comment Here">
     <br>
-    <input type="submit" value="Rate">
+    <input type="submit" value="Rate" class="button">
 
 
     <input type="hidden" name="restaurant_id" value="{{id}}">
@@ -54,7 +62,7 @@ Description: {{data[4]}}<br>
     {{comment[0]}}
     {% if session.username == "admin" %}
     <form action="/erase" method="POST">
-        <input type="submit" value="Delete">
+        <input type="submit" value="Delete" class="button">
         <input type="hidden" name="comment_id" value="{{comment[2]}}">
         <input type="hidden" name="restaurant_id" value="{{id}}">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -74,7 +82,7 @@ Description: {{data[4]}}<br>
 Add Group
 <form action="/group" method="POST">
     <input type="text" name="group" placeholder="Asian,Sushi,Japanese">
-    <input type="submit" value="Add Group">
+    <input type="submit" value="Add Group" class="button">
 
     <input type="hidden" name="restaurant_id" value="{{id}}">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

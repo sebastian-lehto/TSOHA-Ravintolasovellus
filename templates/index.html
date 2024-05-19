@@ -1,6 +1,6 @@
 <head>
     <title>Restaurant Appllication</title>
-    <link rel="stylesheet" href="{{'./styles.css'}}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
 </head>
 <form action="/login" method="POST">
     {{session["message"]}}
@@ -13,7 +13,7 @@
     <br>
     <input type="text" name="password">
     <br>
-    <input type="submit" value="Log In">
-    <a href="/new"> <input type="button" value = "Register"></a>
+    <input type="submit" value="Log In" class="button">
+    <a href="/new"> <input type="button" class="button" value = "Register"></a>
 
 </form>

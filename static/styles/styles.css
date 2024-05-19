@@ -1,0 +1,22 @@
+body {
+    background-image: linear-gradient(rgb(7, 255, 255), rgb(30, 128, 209));
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+form {
+    color: rgb(236, 227, 213);
+    font-size: large;
+    display:inline;
+    
+}
+
+.button {
+    border-radius: 10px;
+    border-color: rgb(73, 247, 247);
+    background-color: aliceblue;
+}
+
+.header {
+    display:inline;
+    white-space: nowrap;
+}

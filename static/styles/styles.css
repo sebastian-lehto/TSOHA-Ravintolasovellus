@@ -1,15 +1,16 @@
 body {
     background-image: linear-gradient(rgb(7, 255, 255), rgb(30, 128, 209));
-    font-family:Verdana, Geneva, Tahoma, sans-serif
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 form {
     color: rgb(236, 227, 213);
     font-size: large;
-    display:inline;
-    
 }
-
+#navbar {
+    display: inline;
+    padding-top: 15px;
+}
 .button {
     border-radius: 10px;
     border-color: rgb(73, 247, 247);
@@ -17,6 +18,21 @@ form {
 }
 
 .header {
-    display:inline;
-    white-space: nowrap;
+    background-image: linear-gradient(rgb(7, 255, 255), rgb(186, 224, 255));
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+    width:100%;
+    margin:0px auto;
+    padding:0px;
+    
+}
+h1, h3 {
+    display: flex;
+    justify-content: space-evenly;
+    color: white;
+}
+p {
+    color: rgb(255, 0, 0);
+    position: relative;
 }

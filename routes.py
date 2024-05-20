@@ -21,6 +21,14 @@ def create():
     if not len(username) in range(4, 13) or not len(password) in range(4, 13):
                 session["message"]  = "Username and Passwod must be 4-12 characters long!"
                 return redirect("/new")
+    
+    sql1 = text("SELECT id FROM users WHERE username=:username")
+    sql2 = text("SELECT id FROM admins WHERE username=:username")
+    result1 = db.session.execute(sql1, {"username":username})
+    result2 = db.session.execute(sql2, {"username":username})
+    if result1 or result2:
+        session["message"]  = "Username is Already Taken!"
+        return redirect("/new")
 
     hash_value = generate_password_hash(password)
     sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
@@ -210,7 +218,7 @@ def group():
     sql1 = text("SELECT groups FROM restaurants WHERE id=:id")
     result = db.session.execute(sql1, {"id":id})
     old = result.fetchone()
-    new = old[0] + "," + groups
+    new = old[0] + ", " + groups.strip(",")
     sql2 = text("UPDATE restaurants SET groups = :new WHERE id=:id")
     db.session.execute(sql2, {"new":new, "id":id})
     db.session.commit()

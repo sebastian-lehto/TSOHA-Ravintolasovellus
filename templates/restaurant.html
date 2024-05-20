@@ -4,22 +4,22 @@
 </head>
 
 <div class="header">
-<form action="/logout" method="POST">
+<form action="/logout" method="POST" id="navbar">
     <input type="submit" value="Log Out" class="button">
 </form>
 
-<form action="/back" method="POST">
+<form action="/back" method="POST" id="navbar">
     <input type="submit" value="Main" class="button">
 </form>
 
-<form action="/favourites" method="POST">
+<form action="/favourites" method="POST" id="navbar">
     <input type="submit" value="Favourites" class="button">
 </form>
 </div>
 
 <h1>RESTAURANT APPLICATION</h1>
 
-{{session["message"]}}
+<p>{{session["message"]}}</p>
 <br>
 <br>
 Name: {{data[0]}}<br>
@@ -59,7 +59,8 @@ Description: {{data[4]}}<br>
 <div>
 {% for comment in comments %}
 <div>
-    {{comment[0]}}
+    {{comment[0]}}:
+    <br>
     {% if session.username == "admin" %}
     <form action="/erase" method="POST">
         <input type="submit" value="Delete" class="button">

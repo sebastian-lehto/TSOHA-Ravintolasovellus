@@ -3,10 +3,10 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
 </head>
 <div class="header">
-<form action="/logout" method="POST">
+<form action="/logout" method="POST" id="navbar">
     <input type="submit" value="Log Out" class="button">
 </form>
-<form action="/back" method="POST">
+<form action="/back" method="POST" id="navbar">
     <input type="submit" value="Main" class="button">
 </form>
 </div>

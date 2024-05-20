@@ -4,17 +4,17 @@
 </head>
 
 <div class="header">
-<form action="/logout" method="POST">
+<form action="/logout" method="POST" id="navbar">
     <input type="submit" value="Log Out" class="button">
 </form>
-<form action="/favourites" method="POST">
+<form action="/favourites" method="POST" id="navbar">
     <input type="submit" value="Favourites" class="button">
 </form>
 </div>
 
 <h1>RESTAURANT APPLICATION</h1>
 <br>
-{{session["message"]}}
+<p>{{session["message"]}}</p>
 <br>
 <form action="/search" method="POST">
     <input type="text" name="search" placeholder="Indian">

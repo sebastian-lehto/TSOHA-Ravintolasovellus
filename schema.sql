@@ -29,5 +29,5 @@ CREATE TABLE comments (
 CREATE TABLE favourites (
     id SERIAL PRIMARY KEY,
     username TEXT,
-    restaurant INTEGER
+    restaurant_id INTEGER
 );

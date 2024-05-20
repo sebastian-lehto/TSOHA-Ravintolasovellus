@@ -106,7 +106,7 @@ def restaurant(id):
     
     sql1 = text("SELECT name, groups, ratings, rating, des FROM restaurants WHERE id=:id")
     sql2 = text("SELECT username, content, id FROM comments WHERE restaurant_id=:id")
-    sql3 = text("SELECT user FROM favourites WHERE username=:username AND restaurant=:id")
+    sql3 = text("SELECT user FROM favourites WHERE username=:username AND restaurant_id=:id")
     result1 = db.session.execute(sql1, {"id":id})
     result2 = db.session.execute(sql2, {"id":id})
     result3 = db.session.execute(sql3, {"username":session["username"], "id":id})
@@ -128,14 +128,14 @@ def rate():
     result = db.session.execute(sql, {"id":id})
     data = result.fetchone()
     
-    amnt = data[0]
-    cur = data[1]
-    rat = int(request.form["rating"])
-    new = ((amnt * cur) + rat) / (amnt + 1)
-    amnt = amnt + 1
-    sql1 = text("UPDATE restaurants SET ratings = ':amnt' WHERE id=:id")
+    amount = data[0]
+    current = data[1]
+    rating = int(request.form["rating"])
+    new = ((amount * current) + rating) / (amount + 1)
+    amount = amount + 1
+    sql1 = text("UPDATE restaurants SET ratings = ':amount' WHERE id=:id")
     sql2 = text("UPDATE restaurants SET rating = ':new' WHERE id=:id")
-    db.session.execute(sql1, {"amnt":amnt, "id":id})
+    db.session.execute(sql1, {"amount":amount, "id":id})
     db.session.execute(sql2, {"new":new, "id":id})
     db.session.commit()
 
@@ -180,7 +180,7 @@ def favourites():
         session["username"]
     except:    
         return redirect("/")
-    sql1 = text("SELECT restaurant FROM favourites WHERE username=:user")
+    sql1 = text("SELECT restaurant_id FROM favourites WHERE username=:user")
     result1 = db.session.execute(sql1, {"user":session["username"]})
     rest_ids = result1.fetchall()
     rests = []
@@ -195,7 +195,7 @@ def favourites():
 @app.route("/search", methods=["POST"])
 def search():
     word = "%" + request.form["search"] + "%"
-    sql = text("SELECT id, name, groups, ratings, rating, des FROM restaurants WHERE groups LIKE :word OR des LIKE :word ORDER BY rating DESC")
+    sql = text("SELECT id, name, groups, ratings, rating, des FROM restaurants WHERE groups LIKE :word OR des LIKE :word OR name LIKE :word ORDER BY rating DESC")
     result = db.session.execute(sql, {"word":word})
     rests = result.fetchall()
     session["message"] = ""
@@ -245,7 +245,7 @@ def delete():
     id = request.form["restaurant_id"]
     sql1 = text("DELETE FROM restaurants WHERE id=:id")
     result1 = db.session.execute(sql1, {"id":id})
-    sql2 = text("DELETE FROM favourites WHERE restaurant=:id")
+    sql2 = text("DELETE FROM favourites WHERE restaurant_id=:id")
     result2 = db.session.execute(sql2, {"id":id})
     sql3 = text("DELETE FROM comments WHERE restaurant_id=:id")
     result3 = db.session.execute(sql3, {"id":id})
@@ -277,13 +277,13 @@ def favourite():
     restaurant_id = request.form["restaurant_id"]
     
     if request.form["favourited"] == "-":
-        sql = text("DELETE FROM favourites WHERE restaurant=:restaurant_id AND username=:user")
+        sql = text("DELETE FROM favourites WHERE restaurant_id=:restaurant_id AND username=:user")
         db.session.execute(sql, {"user":user, "restaurant_id":restaurant_id})
         db.session.commit()
         session["message"] = "Restaurant Removed From Favourites"
         return redirect("/restaurant/"+restaurant_id)
     else:
-        sql = text("INSERT INTO favourites (username, restaurant) VALUES (:user, :restaurant_id)")
+        sql = text("INSERT INTO favourites (username, restaurant_id) VALUES (:user, :restaurant_id)")
         db.session.execute(sql, {"user":user, "restaurant_id":restaurant_id})
         db.session.commit()
         session["message"] = "Restaurant Added To Favourites"

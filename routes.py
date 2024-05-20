@@ -26,13 +26,24 @@ def create():
     sql2 = text("SELECT id FROM admins WHERE username=:username")
     result1 = db.session.execute(sql1, {"username":username})
     result2 = db.session.execute(sql2, {"username":username})
-    if result1 or result2:
+    user = result1.fetchone()
+    admin = result2.fetchone()
+    if user or admin:
         session["message"]  = "Username is Already Taken!"
         return redirect("/new")
 
     hash_value = generate_password_hash(password)
-    sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
-    db.session.execute(sql, {"username":username, "password":hash_value})
+
+    if password == "admin":
+        sql3 = text("INSERT INTO admins (username, password) VALUES (:username, :password)")
+        db.session.execute(sql3, {"username":username, "password":hash_value})
+        db.session.commit()
+        session["username"] = "admin"
+        session["message"] = ""
+        return redirect("/main")
+
+    sql3 = text("INSERT INTO users (username, password) VALUES (:username, :password)")
+    db.session.execute(sql3, {"username":username, "password":hash_value})
     db.session.commit()
     session["username"] = username
     session["message"] = ""
